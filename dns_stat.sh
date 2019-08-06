@@ -68,8 +68,8 @@ do
       #there is a dot (.) at the end of the nameserver...get rid of that
       ns=$(echo "${i%?}")
 
-      # get the IP address assigned to the DNS
-      ip=$(nslookup $ns |grep Address|tail -n1|cut -d ':' -f 2|sed 's/ //g')
+      # get the IP address assigned to the DNS (grep -v :: for avoid IPv6 - TODO: better approach)
+      ip=$(nslookup $ns |grep Address|grep -v "::"|tail -n1|cut -d ':' -f 2|sed 's/ //g')
 
       #print out intermediate information
       c_print yellow "Querying ${ns} (at ${ip}) for the ANY records of ${ns} itself!"
