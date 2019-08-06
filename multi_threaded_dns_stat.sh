@@ -10,7 +10,7 @@ function print_help ()
 {
   c_print red "Unsuffiecent number or format of arguments!"
   c_print yellow "Usage:"
-  c_print bold "\t./multi_threaded_dns_stat.sh [filename_of_domains] [one_or_more_ns_at_a_time] [output] [#threads]"
+  c_print bold "\t./multi_threaded_dns_stat.sh [filename_of_domains] [only_one_ns_at_a_time] [output] [#threads]"
   c_print none "\t-> filename_of_domains: list of domains each in a separate line in the file"
   c_print none "\t-> only_one_ns_at_a_time: 0/1 (there can be even more than 200 nameservers for a domain which clearly lengthens the running time)"
   c_print none "\t-> output: the output filename where the results will be saved - multiple files according to the #threads"
