@@ -45,8 +45,16 @@ c_print bold "Analysing $filename for domains:"
 c_print bold "\tOnly one ns = $only_one_ns"
 c_print bold "\tOutput file will be: ${output}"
 
-echo "IP,NAMESERVER,Query time,Msg size" > $output
+echo "ID,IP,NAMESERVER,Ping RTT,Query time,Msg size" > $output
 
+function calculate_rtt ()
+{
+  ip=$1
+  res=$(ping $ip -c 3 -q |grep "avg"|cut -d '=' -f 2|sed 's/ //g'|cut -d '/' -f 2)
+  return $res
+}
+
+ID=1
 
 for domain_name in $(cat $filename|cut -d ',' -f 2)
 do
@@ -69,7 +77,11 @@ do
     query_time=$(cat tmp_${ns}| grep -i "Query time"| cut -d ':' -f 2|sed 's/ //g')
     msg_size=$(cat tmp_${ns}| grep -i "MSG SIZE"| cut -d ':' -f 2|sed 's/ //g')
 
-    echo "${ip},${ns},${query_time},${msg_size}" >> dns_stats.csv
+    calculate_rtt $ip
+    ping_rtt=$(echo $?)
+
+    echo "${ID},${ip},${ns},${ping_rtt},${query_time},${msg_size}" >> dns_stats.csv
     rm -rf tmp_${ns}
+    ID=`expr $ID + 1`
   done
 done
