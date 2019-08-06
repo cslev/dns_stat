@@ -48,7 +48,7 @@ c_print bold "\tOnly one ns = $only_one_ns"
 c_print bold "\tOutput file will be: ${output}"
 
 
-echo "ID,IP,NAMESERVER,Ping RTT,Query time,Msg size" > $output
+echo "ID,DOMAIN_NAME,IP,NAMESERVER,Ping RTT,Query time,Msg size" > $output
 
 
 ID=1
@@ -80,7 +80,7 @@ do
 
       ping_rtt=$(ping $ip -c 3 -q |grep "avg"|cut -d '=' -f 2|sed 's/ //g'|cut -d '/' -f 2)
 
-      echo "${ID},${ip},${ns},${ping_rtt},${query_time},${msg_size}" >> $output
+      echo "${ID},${domain_name},${ip},${ns},${ping_rtt},${query_time},${msg_size}" >> $output
       rm -rf tmp_${filename}_${ns}
       ID=`expr $ID + 1`
 
