@@ -74,14 +74,14 @@ do
       #print out intermediate information
       c_print yellow "Querying ${ns} (at ${ip}) for the ANY records of ${ns} itself!"
       # echo "dig @$ip $ns ANY +tries=1 +time=2|tail -n 5 > tmp_${ns}"
-      dig @$ip $ns ANY +tries=1 +time=2|tail -n 5 > tmp_${filename}_${ns}
-      query_time=$(cat tmp_${ns}| grep -i "Query time"| cut -d ':' -f 2|sed 's/ //g')
-      msg_size=$(cat tmp_${ns}| grep -i "MSG SIZE"| cut -d ':' -f 2|sed 's/ //g')
+      dig @$ip $domain_name ANY +tries=1 +time=2|tail -n 5 > tmp_${filename}_${ns}
+      query_time=$(cat tmp_${filename}_${ns}| grep -i "Query time"| cut -d ':' -f 2|sed 's/ //g')
+      msg_size=$(cat tmp_${filename}_${ns}| grep -i "MSG SIZE"| cut -d ':' -f 2|sed 's/ //g')
 
       ping_rtt=$(ping $ip -c 3 -q |grep "avg"|cut -d '=' -f 2|sed 's/ //g'|cut -d '/' -f 2)
 
       echo "${ID},${ip},${ns},${ping_rtt},${query_time},${msg_size}" >> $output
-      rm -rf tmp_${ns}
+      rm -rf tmp_${filename}_${ns}
       ID=`expr $ID + 1`
 
       #we break the loop if only the first NS should have been considered only
