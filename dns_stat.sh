@@ -34,6 +34,13 @@ then
   print_help
 fi
 
+if [ $only_one_ns -eq 0 ]
+then
+  cmd = "dig $domain_name NS +tries=1 +time=2 |grep -v "AAAA"|grep A|grep -v ";"|awk '{print $1 "-" $5}'"
+else
+  cmd = "dig $domain_name NS +tries=1 +time=2 |grep -v "AAAA"|grep A|grep -v ";"|head -n1| awk '{print $1 "-" $5}'"
+fi
+
 c_print bold "Analysing $filename for domains:"
 c_print bold "\tOnly one ns = $only_one_ns"
 c_print bold "\tOutput file will be: ${output}"
@@ -47,7 +54,7 @@ do
   sleep 1
   #go through the NS records only and filter out AAAA (IPv6 records) and get the
   #nameserver's domain name and its corresponding IP address (hence awk $1, $5)
-  for i in $(dig $domain_name NS|grep -v "AAAA"|grep A|grep -v ";"|awk '{print $1 "-" $5}')
+  for i in $($cmd)
   do
     #get the nameserver
     ns=$(echo $i|cut -d '-' -f 1)
@@ -58,7 +65,7 @@ do
 
     #print out intermediate information
     c_print yellow "Querying ${ns} (at ${ip}) for the ANY records of ${ns} itself!"
-    dig @$ip $ns ANY |tail -n 5 > tmp_${ns}
+    dig @$ip $ns ANY +tries=1 +time=2|tail -n 5 > tmp_${ns}
     query_time=$(cat tmp_${ns}| grep -i "Query time"| cut -d ':' -f 2|sed 's/ //g')
     msg_size=$(cat tmp_${ns}| grep -i "MSG SIZE"| cut -d ':' -f 2|sed 's/ //g')
 
