@@ -55,7 +55,7 @@ ID=1
 
 for domain_name in $(cat $filename|cut -d ',' -f 2)
 do
-  cmd="dig $domain_name NS |grep NS|grep -v ';'| sed 's/[[:blank:]]/;/g'|cut -d ';' -f 6"
+  #cmd="dig $domain_name NS |grep NS|grep -v ';'| sed 's/[[:blank:]]/;/g'|cut -d ';' -f 6"
   # if we don't care about all nameservers, we simply add head -n1 to the command
   c_print blue "Checking ${domain_name}..."
   sleep 1
@@ -74,7 +74,7 @@ do
       #print out intermediate information
       c_print yellow "Querying ${ns} (at ${ip}) for the ANY records of ${ns} itself!"
       # echo "dig @$ip $ns ANY +tries=1 +time=2|tail -n 5 > tmp_${ns}"
-      dig @$ip $domain_name ANY +tries=1 +time=2|tail -n 5 > tmp_${filename}_${ns}
+      dig +edns +dnssec +notcp +ignore +tries=1 +time=2  @$ip $domain_name ANY |tail -n 5 > tmp_${filename}_${ns}
       query_time=$(cat tmp_${filename}_${ns}| grep -i "Query time"| cut -d ':' -f 2|sed 's/ //g')
       msg_size=$(cat tmp_${filename}_${ns}| grep -i "MSG SIZE"| cut -d ':' -f 2|sed 's/ //g')
 
